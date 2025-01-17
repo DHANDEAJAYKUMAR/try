@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Description</title>
+    <link rel="stylesheet" href="style.css">
+   
+</head>
+<body>
+    <div class="container">
+        <h1>Student Description</h1>
+        <div id="studentDescriptionContainer"></div>
+        <button onclick="goBack()">Go Back</button>
+    </div>
+
+    <script>
+        const selectedStudent = JSON.parse(localStorage.getItem('selectedStudent'));
+        const studentDescriptionContainer = document.getElementById('studentDescriptionContainer');
+
+        if (selectedStudent) {
+            studentDescriptionContainer.innerHTML = `
+                <p>${selectedStudent.description}</p>
+            `;
+        }
+
+        function goBack() {
+            window.history.back(); // Go back to the previous page
+        }
+    </script>
+</body>
+</html>

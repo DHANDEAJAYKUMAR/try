@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Input Boxes</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Enter Student Details</h1>
+        <div id="formContainer" class="form-container"></div>
+        <button id="saveButton" onclick="saveDetails()" style="display:none;">Save</button>
+    </div>
+
+    <script>
+        // Get the number of students from the query parameter
+        const params = new URLSearchParams(window.location.search);
+        const numStudents = parseInt(params.get("numStudents"));
+
+        const formContainer = document.getElementById("formContainer");
+        const saveButton = document.getElementById("saveButton");
+
+        // Generate input forms based on the number of students
+        if (numStudents > 0) {
+            for (let i = 0; i < numStudents; i++) {
+                const formDiv = document.createElement("div");
+                formDiv.classList.add("student-form");
+                formDiv.innerHTML = `
+                    <h3>Student ${i + 1}</h3>
+                    <label for="name${i}">Name:</label>
+                    <input type="text" id="name${i}" placeholder="Enter student name">
+                    
+                    <label for="description${i}">Description:</label>
+                    <textarea id="description${i}" placeholder="Enter description"></textarea>
+                    
+                    <label for="photo${i}">Upload Photo:</label>
+                    <input type="file" id="photo${i}" accept="image/*">
+                `;
+                formContainer.appendChild(formDiv);
+            }
+            saveButton.style.display = "block"; // Show save button
+        }
+
+        // Save details to localStorage
+        function saveDetails() {
+            const studentDetails = [];
+            for (let i = 0; i < numStudents; i++) {
+                const name = document.getElementById(`name${i}`).value;
+                const description = document.getElementById(`description${i}`).value;
+                const photo = document.getElementById(`photo${i}`).files[0];
+
+                // Convert photo to base64 for storage
+                if (photo) {
+                    const reader = new FileReader();
+                    reader.onload = function (e) {
+                        studentDetails.push({
+                            name,
+                            description,
+                            photo: e.target.result,
+                        });
+
+                        // Save all details to localStorage after the last photo is processed
+                        if (studentDetails.length === numStudents) {
+                            localStorage.setItem("studentDetails", JSON.stringify(studentDetails));
+                            window.location.href = "display.html"; // Navigate to display page
+                        }
+                    };
+                    reader.readAsDataURL(photo);
+                } else {
+                    studentDetails.push({ name, description, photo: "" });
+                }
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Display</title>
+    <link rel="stylesheet" href="style.css">
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f9f9f9;
+            padding: 20px;
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        .student-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+            justify-items: center;
+        }
+
+        .student-card {
+            background: #fff;
+            border: 1px solid #ddd;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .student-card img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+
+        .student-card button {
+            padding: 10px;
+            font-size: 18px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        .student-card button:hover {
+            background-color: #45a049;
+        }
+
+        .generate-url {
+            position: fixed;
+            top: 20px;
+            right: 0px;
+            z-index: 1000;
+        }
+        
+        .generate-url button {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 15px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+        .generate-url button:hover {
+            background-color: #0056b3;
+        }
+
+        #output {
+            text-align: center;
+            margin-top: 10px;
+            word-wrap: break-word;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Student List - View Details</h1>
+
+        <div class="generate-url">
+            <button id="generateUrlButton">Generate URL Link</button>
+        </div>
+        <div id="output"></div>
+
+        <div id="studentGrid" class="student-grid"></div>
+    </div>
+
+    <script>
+        // Retrieve student data from URL or localStorage
+        const urlParams = new URLSearchParams(window.location.search);
+        const dataFromUrl = urlParams.get('data');
+        let studentDetails = dataFromUrl ? JSON.parse(decodeURIComponent(dataFromUrl)) : JSON.parse(localStorage.getItem('studentDetails'));
+        const studentGrid = document.getElementById('studentGrid');
+        const outputElement = document.getElementById('output');
+
+        // Render student cards
+        function renderStudents() {
+            if (studentDetails) {
+                studentGrid.innerHTML = ''; // Clear previous content
+                studentDetails.forEach((student, index) => {
+                    const studentCard = document.createElement('div');
+                    studentCard.classList.add('student-card');
+                    studentCard.innerHTML = `
+                        <img src="${student.photo}" alt="Student Photo">
+                        <button onclick="viewDescription(${index})">${student.name}</button>
+                    `;
+                    studentGrid.appendChild(studentCard);
+                });
+            } else {
+                studentGrid.innerHTML = '<p>No student details available.</p>';
+            }
+        }
+
+        renderStudents();
+
+        // View description function
+        function viewDescription(index) {
+            localStorage.setItem('selectedStudent', JSON.stringify(studentDetails[index]));
+            window.location.href = "description.html"; // Navigate to description page
+        }
+
+        // Generate URL button functionality
+        document.getElementById('generateUrlButton').addEventListener('click', () => {
+            if (!studentDetails || studentDetails.length === 0) {
+                outputElement.textContent = "No student details available to generate the URL.";
+                return;
+            }
+
+            try {
+                const baseUrl = window.location.origin + window.location.pathname;
+                const encodedData = encodeURIComponent(JSON.stringify(studentDetails));
+                const uniqueUrl = `${baseUrl}?data=${encodedData}`;
+                outputElement.innerHTML = `
+                    <p>Generated URL:</p>
+                    <a href="${uniqueUrl}" target="_blank">${uniqueUrl}</a>
+                `;
+            } catch (error) {
+                console.error("Error generating the URL:", error);
+                outputElement.textContent = "Failed to generate the URL.";
+            }
+        });
+    </script>
+</body>
+</html>

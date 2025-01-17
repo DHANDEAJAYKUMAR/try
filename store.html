@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stored Student Data</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f9f9f9;
+            padding: 20px;
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        .student-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+            justify-items: center;
+        }
+
+        .student-card {
+            background: #fff;
+            border: 1px solid #ddd;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .student-card img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Stored Student Data</h1>
+
+        <div id="studentGrid" class="student-grid"></div>
+    </div>
+
+    <script>
+        const storedData = JSON.parse(localStorage.getItem('storeData'));
+        const studentGrid = document.getElementById('studentGrid');
+
+        // Render student cards
+        if (storedData) {
+            storedData.forEach((student) => {
+                const studentCard = document.createElement('div');
+                studentCard.classList.add('student-card');
+                studentCard.innerHTML = `
+                    <img src="${student.photo}" alt="Student Photo">
+                    <p>${student.name}</p>
+                `;
+                studentGrid.appendChild(studentCard);
+            });
+        } else {
+            studentGrid.innerHTML = '<p>No stored student data available.</p>';
+        }
+    </script>
+</body>
+</html>
