@@ -3,7 +3,7 @@ body {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    background-image:url('violet.png');
+    background-image:url('./violet.png');
 }
 input[type="number"] {
     width: 400px; /* Increase width */
